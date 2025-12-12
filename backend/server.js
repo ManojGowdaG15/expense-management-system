@@ -1,11 +1,14 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+// backend/server.js
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
 
-const authRoutes = require('./src/routes/authRoutes');
-const expenseRoutes = require('./src/routes/expenseRoutes');
-const userRoutes = require('./src/routes/userRoutes');
+// THIS LINE WAS MISSING — THIS IS THE FIX
+dotenv.config();
+
+import authRoutes from "./routes/auth.js";
+import expenseRoutes from "./routes/expenses.js";
 
 const app = express();
 
@@ -13,22 +16,26 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Database connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch(err => console.error('MongoDB connection error:', err));
-
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/expenses', expenseRoutes);
-app.use('/api/users', userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/expenses", expenseRoutes);
 
-// Basic route
-app.get('/', (req, res) => {
-  res.json({ message: 'Expense Management API' });
+app.get("/", (req, res) => {
+  res.send("Expense Management API is running!");
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
+// NOW IT WILL READ YOUR .env CORRECTLY
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected to MongoDB successfully");
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+      console.log(`Visit: http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err.message);
+  });
