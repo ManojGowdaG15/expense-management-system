@@ -1,0 +1,4 @@
+# frontend/.env.production
+VITE_API_URL=https://expense-management-system-ontq.onrender.com
+VITE_APP_NAME=Expense Management System
+NODE_ENV=production

@@ -589,3 +589,42 @@ button:disabled:hover {
     font-size: 16px; /* Prevents zoom on mobile */
   }
 }
+/* Add these to your CSS if not already present */
+
+/* Card spacing */
+.card {
+  margin-bottom: 2rem;
+}
+
+/* Form spacing */
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Button hover effects */
+.btn:hover {
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* Table responsiveness */
+@media (max-width: 768px) {
+  .data-table {
+    overflow-x: auto;
+  }
+  
+  .grid-3 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* Animation for spinner */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
