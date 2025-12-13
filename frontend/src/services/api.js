@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://your-render-backend-name.onrender.com/api', // ← REPLACE WITH YOUR RENDER URL
+  baseURL: 'https://expense-management-system-ontq.onrender.com', // ← REPLACE WITH YOUR RENDER URL
   withCredentials: true
 });
 
