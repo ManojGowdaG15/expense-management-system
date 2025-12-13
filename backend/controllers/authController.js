@@ -33,10 +33,11 @@ const login = async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    // FIXED COOKIE SETTINGS FOR PRODUCTION CROSS-ORIGIN
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: true,                // Required for cross-site cookies in production (HTTPS)
+      sameSite: 'none',            // Critical: Allows cookie to be sent from Vercel to Render
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
@@ -45,13 +46,18 @@ const login = async (req, res) => {
       user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
   } catch (err) {
+    console.error('Login error:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-const logout = (req, res) => {
-  res.clearCookie('token');
-  res.json({ success: true, message: 'Logged out' });
+const logout = async (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none'
+  });
+  res.json({ success: true, message: 'Logged out successfully' });
 };
 
 const getMe = (req, res) => {
