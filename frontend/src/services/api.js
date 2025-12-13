@@ -1,15 +1,11 @@
+// frontend/src/services/api.js
 import axios from 'axios';
 
-// This reads from .env.production file
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
 const API = axios.create({
-  baseURL: API_BASE_URL + '/api',
-  withCredentials: true,
-  timeout: 30000,
+  baseURL: 'https://your-render-backend-name.onrender.com/api', // ← REPLACE WITH YOUR RENDER URL
+  withCredentials: true
 });
 
-// Your API functions...
 export const login = (data) => API.post('/auth/login', data);
 export const logout = () => API.post('/auth/logout');
 export const getMe = () => API.get('/auth/me');
