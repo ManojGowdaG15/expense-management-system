@@ -50,7 +50,7 @@ const Login = () => {
   const demoCredentials = [
     { role: 'Employee', email: 'john.developer@datasturdy.com', password: 'employee123' },
     { role: 'Manager', email: 'engmanager@datasturdy.com', password: 'manager123' },
-    { role: 'Finance', email: 'finance@test.com', password: 'finance123' },
+    { role: 'Finance', email: 'finance@datasturdy.com', password: 'finance123' },
     { role: 'Admin', email: 'admin@datasturdy.com', password: 'admin123' }
   ];
 
