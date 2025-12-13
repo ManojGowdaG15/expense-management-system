@@ -10,17 +10,34 @@ const { seedUsers } = require('./controllers/authController');
 
 const app = express();
 
-// Connect DB
+// Connect to MongoDB
 connectDB();
 
-// Seed users on startup
+// Seed test users on startup (safe for production with check)
 seedUsers();
 
-// Middleware
+// === FIXED CORS CONFIGURATION ===
+const allowedOrigins = [
+  'https://expense-management-system-eosin.vercel.app',  // Your live Vercel URL
+  'http://localhost:5173',
+  'http://127.0.0.1:5173'
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || ['http://localhost:5173','http://127.0.0.1:5173'],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
+// === END FIX ===
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -28,8 +45,9 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
 
+// Health check route
 app.get('/', (req, res) => {
-  res.send('Expense Management API Running');
+  res.send('Expense Management API Running ✅');
 });
 
 const PORT = process.env.PORT || 5000;
