@@ -1,51 +1,22 @@
+// backend/routes/expenseRoutes.js
 const express = require('express');
+const {
+  submitExpense,
+  getMyExpenses,
+  getAllExpenses,
+  updateStatus,
+  getDashboardSummary
+} = require('../controllers/expenseController');
+const { protect, managerOnly } = require('../middleware/authMiddleware');
+
 const router = express.Router();
-const expenseController = require('../controllers/expenseController');
-const { auth, authorize, canApproveExpenses } = require('../middleware/auth');
-const { uploadSingle } = require('../middleware/upload');
-const { expenseValidationRules, paginationValidationRules, validate } = require('../middleware/validation');
 
-// All routes are protected
-router.use(auth);
+router.use(protect);
 
-// Employee routes
-router.post('/', 
-    uploadSingle('receipt'), 
-    expenseValidationRules(), 
-    validate, 
-    expenseController.createExpense
-);
-
-router.get('/', 
-    paginationValidationRules(), 
-    validate, 
-    expenseController.getUserExpenses
-);
-
-// IMPORTANT: PUT THIS BEFORE THE '/:id' ROUTE
-router.get('/pending', 
-    authorize('manager', 'finance', 'admin'), 
-    paginationValidationRules(), 
-    validate, 
-    expenseController.getPendingExpenses
-);
-
-// Now the '/:id' route won't catch '/pending'
-router.get('/:id', expenseController.getExpenseById);
-router.put('/:id', uploadSingle('receipt'), expenseController.updateExpense);
-router.delete('/:id', expenseController.deleteExpense);
-router.post('/:id/submit', expenseController.submitExpense);
-router.get('/:id/receipt', expenseController.downloadReceipt);
-
-// Manager/Finance/Admin approval routes
-router.put('/:id/approve', 
-    authorize('manager', 'finance', 'admin'), 
-    expenseController.approveExpense
-);
-
-router.put('/:id/reject', 
-    authorize('manager', 'finance', 'admin'), 
-    expenseController.rejectExpense
-);
+router.post('/submit', submitExpense);
+router.get('/my', getMyExpenses);
+router.get('/all', managerOnly, getAllExpenses);
+router.patch('/:id/status', managerOnly, updateStatus);
+router.get('/dashboard', getDashboardSummary);
 
 module.exports = router;
