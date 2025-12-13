@@ -1,4 +1,4 @@
-// src/App.jsx
+// src/App.jsx - COMPLETE
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Login from './pages/Login';
@@ -37,7 +37,7 @@ function App() {
       <Routes>
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login setUser={setUser} />} />
         <Route
-          path="/*"
+          path="/"
           element={
             user ? (
               user.role === 'employee' ? (
