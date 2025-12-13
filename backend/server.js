@@ -22,13 +22,14 @@ const corsOptions = {
     // Allow requests with no origin (like mobile apps, curl, Postman)
     if (!origin) return callback(null, true);
     
-    const allowedOrigins = [
-      'https://expense-management-system-eosin.vercel.app',
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'http://127.0.0.1:5173',
-      'http://127.0.0.1:3000'
-    ];
+const allowedOrigins = [
+  'https://expense-management-system-eosin.vercel.app',      // Your production URL
+  'https://expense-management-system-jzld0ph3k-manoj-gowda-gs-projects.vercel.app', // Your preview URL
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000'
+];
     
     // Log all incoming origins for debugging
     console.log('Incoming origin:', origin);
