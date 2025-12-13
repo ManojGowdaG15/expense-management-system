@@ -2,12 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axiosInstance from '../../api/axiosConfig';
 import { formatCurrency, formatDate, getStatusColor, getStatusLabel } from '../../utils/helpers';
+import { 
+  MoneyIcon, 
+  ClockIcon, 
+  CheckIcon, 
+  CrossIcon, 
+  AddExpenseIcon, 
+  FileIcon, 
+  ChartIcon 
+} from '../Common/Icons';
 import LoadingSpinner from '../Common/LoadingSpinner';
 import ErrorMessage from '../Common/ErrorMessage';
 import './Employee.css';
 
 const EmployeeDashboard = () => {
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({
+    totalAmount: 0,
+    pendingCount: 0,
+    approvedAmount: 0,
+    rejectedCount: 0,
+    totalCount: 0
+  });
   const [recentExpenses, setRecentExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -62,14 +77,17 @@ const EmployeeDashboard = () => {
       <div className="dashboard-header">
         <h2>Dashboard</h2>
         <Link to="/submit-expense" className="btn-primary">
-          + New Expense
+          <AddExpenseIcon size={16} />
+          <span>New Expense</span>
         </Link>
       </div>
       
       {/* Stats Cards */}
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon total">💰</div>
+          <div className="stat-icon">
+            <MoneyIcon size={24} />
+          </div>
           <div className="stat-info">
             <h3>Total Expenses</h3>
             <p className="stat-value">{formatCurrency(stats.totalAmount)}</p>
@@ -78,7 +96,9 @@ const EmployeeDashboard = () => {
         </div>
         
         <div className="stat-card">
-          <div className="stat-icon pending">⏳</div>
+          <div className="stat-icon">
+            <ClockIcon size={24} />
+          </div>
           <div className="stat-info">
             <h3>Pending</h3>
             <p className="stat-value">{stats.pendingCount}</p>
@@ -87,7 +107,9 @@ const EmployeeDashboard = () => {
         </div>
         
         <div className="stat-card">
-          <div className="stat-icon approved">✅</div>
+          <div className="stat-icon">
+            <CheckIcon size={24} />
+          </div>
           <div className="stat-info">
             <h3>Approved</h3>
             <p className="stat-value">{formatCurrency(stats.approvedAmount)}</p>
@@ -96,7 +118,9 @@ const EmployeeDashboard = () => {
         </div>
         
         <div className="stat-card">
-          <div className="stat-icon rejected">❌</div>
+          <div className="stat-icon">
+            <CrossIcon size={24} />
+          </div>
           <div className="stat-info">
             <h3>Rejected</h3>
             <p className="stat-value">{stats.rejectedCount}</p>
@@ -109,13 +133,19 @@ const EmployeeDashboard = () => {
       <div className="recent-expenses">
         <div className="section-header">
           <h3>Recent Expenses</h3>
-          <Link to="/expenses" className="btn-link">View All</Link>
+          <Link to="/expenses" className="btn-link">
+            <FileIcon size={16} />
+            <span>View All</span>
+          </Link>
         </div>
         
         {recentExpenses.length === 0 ? (
           <div className="empty-state">
             <p>No expenses yet. Create your first expense!</p>
-            <Link to="/submit-expense" className="btn-primary">Submit Expense</Link>
+            <Link to="/submit-expense" className="btn-primary">
+              <AddExpenseIcon size={16} />
+              <span>Submit Expense</span>
+            </Link>
           </div>
         ) : (
           <div className="table-container">
@@ -163,15 +193,21 @@ const EmployeeDashboard = () => {
         <h3>Quick Actions</h3>
         <div className="actions-grid">
           <Link to="/submit-expense" className="action-card">
-            <div className="action-icon">➕</div>
+            <div className="action-icon">
+              <AddExpenseIcon size={32} />
+            </div>
             <div className="action-text">Submit New Expense</div>
           </Link>
           <Link to="/expenses" className="action-card">
-            <div className="action-icon">📋</div>
+            <div className="action-icon">
+              <FileIcon size={32} />
+            </div>
             <div className="action-text">View All Expenses</div>
           </Link>
           <div className="action-card">
-            <div className="action-icon">📊</div>
+            <div className="action-icon">
+              <ChartIcon size={32} />
+            </div>
             <div className="action-text">Expense Reports</div>
           </div>
         </div>

@@ -1,6 +1,15 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuthHook } from '../../hooks/useAuth';
+import { 
+  DashboardIcon, 
+  ExpensesIcon, 
+  AddExpenseIcon, 
+  PendingIcon, 
+  TeamIcon, 
+  ReimbursementsIcon, 
+  ReportsIcon 
+} from '../Common/Icons';
 import './Layout.css';
 
 const Sidebar = () => {
@@ -9,21 +18,21 @@ const Sidebar = () => {
   if (!user) return null;
 
   const employeeLinks = [
-    { to: '/', label: 'Dashboard', icon: '📊' },
-    { to: '/expenses', label: 'My Expenses', icon: '💰' },
-    { to: '/submit-expense', label: 'Submit Expense', icon: '➕' }
+    { to: '/', label: 'Dashboard', icon: <DashboardIcon /> },
+    { to: '/expenses', label: 'My Expenses', icon: <ExpensesIcon /> },
+    { to: '/submit-expense', label: 'Submit Expense', icon: <AddExpenseIcon /> }
   ];
 
   const managerLinks = [
-    { to: '/', label: 'Dashboard', icon: '📊' },
-    { to: '/pending-expenses', label: 'Pending', icon: '⏳' },
-    { to: '/team-expenses', label: 'Team', icon: '👥' }
+    { to: '/', label: 'Dashboard', icon: <DashboardIcon /> },
+    { to: '/pending-expenses', label: 'Pending', icon: <PendingIcon /> },
+    { to: '/team-expenses', label: 'Team', icon: <TeamIcon /> }
   ];
 
   const financeLinks = [
-    { to: '/', label: 'Dashboard', icon: '📊' },
-    { to: '/reimbursements', label: 'Reimbursements', icon: '💳' },
-    { to: '/reports', label: 'Reports', icon: '📈' }
+    { to: '/', label: 'Dashboard', icon: <DashboardIcon /> },
+    { to: '/reimbursements', label: 'Reimbursements', icon: <ReimbursementsIcon /> },
+    { to: '/reports', label: 'Reports', icon: <ReportsIcon /> }
   ];
 
   let links = [];
@@ -34,6 +43,9 @@ const Sidebar = () => {
 
   return (
     <nav className="sidebar">
+      <div className="sidebar-brand">
+        <h3>Expense Management</h3>
+      </div>
       <div className="sidebar-menu">
         {links.map((link) => (
           <NavLink

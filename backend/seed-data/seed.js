@@ -114,36 +114,6 @@ const seedCategories = async () => {
             requiresReceipt: false,
             allowedPaymentMethods: ['cash', 'credit_card', 'debit_card'],
             isActive: true
-        },
-        { 
-            name: 'Training', 
-            code: 'TRAIN', 
-            description: 'Training and development expenses',
-            limit: 3000,
-            requiresApproval: true,
-            requiresReceipt: true,
-            allowedPaymentMethods: ['corporate_card', 'online'],
-            isActive: true
-        },
-        { 
-            name: 'Software', 
-            code: 'SW', 
-            description: 'Software subscriptions and licenses',
-            limit: 5000,
-            requiresApproval: true,
-            requiresReceipt: true,
-            allowedPaymentMethods: ['corporate_card', 'online'],
-            isActive: true
-        },
-        { 
-            name: 'Entertainment', 
-            code: 'ENT', 
-            description: 'Client entertainment expenses',
-            limit: 1500,
-            requiresApproval: true,
-            requiresReceipt: true,
-            allowedPaymentMethods: ['credit_card', 'corporate_card'],
-            isActive: true
         }
     ];
 
@@ -177,16 +147,6 @@ const seedUsers = async (departments) => {
             employeeId: 'ADM001',
             isActive: true
         },
-        {
-            name: 'Super Admin',
-            email: 'superadmin@datasturdy.com',
-            password: hashedAdminPassword,
-            role: 'admin',
-            department: 'Administration',
-            designation: 'Super Administrator',
-            employeeId: 'ADM002',
-            isActive: true
-        },
 
         // Finance users
         {
@@ -197,16 +157,6 @@ const seedUsers = async (departments) => {
             department: 'Finance',
             designation: 'Finance Manager',
             employeeId: 'FIN001',
-            isActive: true
-        },
-        {
-            name: 'Accounts Executive',
-            email: 'accounts@datasturdy.com',
-            password: hashedFinancePassword,
-            role: 'finance',
-            department: 'Finance',
-            designation: 'Accounts Executive',
-            employeeId: 'FIN002',
             isActive: true
         },
 
@@ -229,26 +179,6 @@ const seedUsers = async (departments) => {
             department: 'Sales',
             designation: 'Sales Manager',
             employeeId: 'MGR002',
-            isActive: true
-        },
-        {
-            name: 'Marketing Manager',
-            email: 'marketingmanager@datasturdy.com',
-            password: hashedManagerPassword,
-            role: 'manager',
-            department: 'Marketing',
-            designation: 'Marketing Manager',
-            employeeId: 'MGR003',
-            isActive: true
-        },
-        {
-            name: 'HR Manager',
-            email: 'hrmanager@datasturdy.com',
-            password: hashedManagerPassword,
-            role: 'manager',
-            department: 'Human Resources',
-            designation: 'HR Manager',
-            employeeId: 'MGR004',
             isActive: true
         },
 
@@ -283,16 +213,6 @@ const seedUsers = async (departments) => {
             employeeId: 'ENG003',
             isActive: true
         },
-        {
-            name: 'Lisa DevOps',
-            email: 'lisa.devops@datasturdy.com',
-            password: hashedEmployeePassword,
-            role: 'employee',
-            department: 'Engineering',
-            designation: 'DevOps Engineer',
-            employeeId: 'ENG004',
-            isActive: true
-        },
 
         // Sales Employees
         {
@@ -314,60 +234,6 @@ const seedUsers = async (departments) => {
             designation: 'Account Manager',
             employeeId: 'SAL002',
             isActive: true
-        },
-        {
-            name: 'David Relations',
-            email: 'david.relations@datasturdy.com',
-            password: hashedEmployeePassword,
-            role: 'employee',
-            department: 'Sales',
-            designation: 'Business Development',
-            employeeId: 'SAL003',
-            isActive: true
-        },
-
-        // Marketing Employees
-        {
-            name: 'Olivia Marketing',
-            email: 'olivia.marketing@datasturdy.com',
-            password: hashedEmployeePassword,
-            role: 'employee',
-            department: 'Marketing',
-            designation: 'Marketing Specialist',
-            employeeId: 'MRK001',
-            isActive: true
-        },
-        {
-            name: 'James Content',
-            email: 'james.content@datasturdy.com',
-            password: hashedEmployeePassword,
-            role: 'employee',
-            department: 'Marketing',
-            designation: 'Content Writer',
-            employeeId: 'MRK002',
-            isActive: true
-        },
-
-        // HR Employees
-        {
-            name: 'Sophia HR',
-            email: 'sophia.hr@datasturdy.com',
-            password: hashedEmployeePassword,
-            role: 'employee',
-            department: 'Human Resources',
-            designation: 'HR Executive',
-            employeeId: 'HR001',
-            isActive: true
-        },
-        {
-            name: 'Robert Recruiter',
-            email: 'robert.recruiter@datasturdy.com',
-            password: hashedEmployeePassword,
-            role: 'employee',
-            department: 'Human Resources',
-            designation: 'Recruitment Specialist',
-            employeeId: 'HR002',
-            isActive: true
         }
     ];
 
@@ -378,15 +244,12 @@ const seedUsers = async (departments) => {
         // Set manager relationships
         const engineeringManager = createdUsers.find(u => u.email === 'engmanager@datasturdy.com');
         const salesManager = createdUsers.find(u => u.email === 'salesmanager@datasturdy.com');
-        const marketingManager = createdUsers.find(u => u.email === 'marketingmanager@datasturdy.com');
-        const hrManager = createdUsers.find(u => u.email === 'hrmanager@datasturdy.com');
 
         // Update employees with their manager IDs
         await User.updateMany(
             { 
                 department: 'Engineering', 
-                role: 'employee',
-                email: { $ne: 'engmanager@datasturdy.com' }
+                role: 'employee'
             },
             { managerId: engineeringManager._id }
         );
@@ -394,28 +257,9 @@ const seedUsers = async (departments) => {
         await User.updateMany(
             { 
                 department: 'Sales', 
-                role: 'employee',
-                email: { $ne: 'salesmanager@datasturdy.com' }
+                role: 'employee'
             },
             { managerId: salesManager._id }
-        );
-
-        await User.updateMany(
-            { 
-                department: 'Marketing', 
-                role: 'employee',
-                email: { $ne: 'marketingmanager@datasturdy.com' }
-            },
-            { managerId: marketingManager._id }
-        );
-
-        await User.updateMany(
-            { 
-                department: 'Human Resources', 
-                role: 'employee',
-                email: { $ne: 'hrmanager@datasturdy.com' }
-            },
-            { managerId: hrManager._id }
         );
 
         console.log('✅ Manager relationships set');
@@ -426,10 +270,21 @@ const seedUsers = async (departments) => {
     }
 };
 
+// Counter for generating unique expense IDs
+let expenseCounter = 1;
+
+// Helper to generate unique expense ID
+const generateExpenseId = () => {
+    const year = new Date().getFullYear();
+    const id = `EXP${year}${String(expenseCounter).padStart(5, '0')}`;
+    expenseCounter++;
+    return id;
+};
+
 // Generate realistic expense data
-const seedExpenses = async (users, categories) => {
+const seedExpenses = async (users) => {
     const expenses = [];
-    const statuses = ['draft', 'submitted', 'under_review', 'approved', 'rejected', 'reimbursed'];
+    const statuses = ['draft', 'submitted', 'under_review', 'approved', 'rejected', 'reimbursed', 'paid'];
     const paymentMethods = ['cash', 'credit_card', 'debit_card', 'online', 'corporate_card'];
     const categoriesArray = ['travel', 'food', 'accommodation', 'office_supplies', 'others'];
     
@@ -437,37 +292,51 @@ const seedExpenses = async (users, categories) => {
     const managers = users.filter(u => u.role === 'manager');
     const financeUsers = users.filter(u => u.role === 'finance');
 
-    // Helper function to get random date within range
-    const randomDate = (start, end) => {
-        return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    // Helper function to get random date within last 7 days
+    const getRandomRecentDate = () => {
+        const today = new Date();
+        const oneWeekAgo = new Date(today);
+        oneWeekAgo.setDate(today.getDate() - 7);
+        
+        return new Date(oneWeekAgo.getTime() + Math.random() * (today.getTime() - oneWeekAgo.getTime()));
     };
 
-    // Helper function to get random element from array
-    const randomElement = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-    // Generate 50 expenses per employee (for testing)
+    // Generate 5-8 expenses per employee
     for (const employee of employees) {
         const employeeManager = managers.find(m => 
             m.department === employee.department && m.role === 'manager'
         );
 
-        for (let i = 0; i < 50; i++) {
-            const category = randomElement(categoriesArray);
-            const status = randomElement(statuses);
-            const amount = Math.floor(Math.random() * 5000) + 100;
-            const expenseDate = randomDate(new Date(2024, 0, 1), new Date());
-            const submissionDate = new Date(expenseDate.getTime() + Math.random() * 7 * 24 * 60 * 60 * 1000);
+        const expenseCount = Math.floor(Math.random() * 4) + 5; // 5-8 expenses per employee
+
+        for (let i = 0; i < expenseCount; i++) {
+            const category = categoriesArray[Math.floor(Math.random() * categoriesArray.length)];
+            const status = statuses[Math.floor(Math.random() * statuses.length)];
+            
+            // Generate amount based on category
+            let amount;
+            switch(category) {
+                case 'travel': amount = Math.floor(Math.random() * 4500) + 500; break;
+                case 'food': amount = Math.floor(Math.random() * 800) + 200; break;
+                case 'accommodation': amount = Math.floor(Math.random() * 2500) + 1000; break;
+                case 'office_supplies': amount = Math.floor(Math.random() * 1500) + 500; break;
+                default: amount = Math.floor(Math.random() * 400) + 100;
+            }
+            
+            const expenseDate = getRandomRecentDate();
+            const submissionDate = new Date(expenseDate.getTime() + Math.random() * 2 * 24 * 60 * 60 * 1000);
             
             const expenseData = {
+                expenseId: generateExpenseId(),
                 userId: employee._id,
                 expenseDate,
                 submissionDate,
                 category,
                 amount,
-                currency: 'USD',
-                description: `Expense for ${category} - ${getExpenseDescription(category)}`,
+                currency: 'INR',
+                description: getExpenseDescription(category, employee.department),
                 vendorName: getVendorName(category),
-                paymentMethod: randomElement(paymentMethods),
+                paymentMethod: paymentMethods[Math.floor(Math.random() * paymentMethods.length)],
                 receiptNumber: `REC${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`,
                 receiptFile: `receipt_${employee._id}_${i}.pdf`,
                 status,
@@ -486,19 +355,21 @@ const seedExpenses = async (users, categories) => {
                 });
             }
 
-            if (['under_review', 'approved', 'rejected', 'reimbursed'].includes(status)) {
-                const reviewDate = new Date(submissionDate.getTime() + Math.random() * 2 * 24 * 60 * 60 * 1000);
+            if (['under_review', 'approved', 'rejected', 'reimbursed', 'paid'].includes(status)) {
+                const reviewDate = new Date(submissionDate.getTime() + Math.random() * 24 * 60 * 60 * 1000);
                 expenseData.statusHistory.push({
                     status: 'under_review',
                     changedBy: employeeManager?._id || employee._id,
                     comments: 'Under review by manager',
                     changedAt: reviewDate
                 });
-                expenseData.approverId = employeeManager?._id;
+                if (employeeManager) {
+                    expenseData.approverId = employeeManager._id;
+                }
             }
 
-            if (['approved', 'reimbursed'].includes(status)) {
-                const approvalDate = new Date(submissionDate.getTime() + Math.random() * 3 * 24 * 60 * 60 * 1000);
+            if (['approved', 'reimbursed', 'paid'].includes(status)) {
+                const approvalDate = new Date(submissionDate.getTime() + Math.random() * 2 * 24 * 60 * 60 * 1000);
                 expenseData.statusHistory.push({
                     status: 'approved',
                     changedBy: employeeManager?._id || employee._id,
@@ -509,37 +380,39 @@ const seedExpenses = async (users, categories) => {
             }
 
             if (status === 'rejected') {
-                const rejectionDate = new Date(submissionDate.getTime() + Math.random() * 3 * 24 * 60 * 60 * 1000);
+                const rejectionDate = new Date(submissionDate.getTime() + Math.random() * 2 * 24 * 60 * 60 * 1000);
                 expenseData.statusHistory.push({
                     status: 'rejected',
                     changedBy: employeeManager?._id || employee._id,
-                    comments: 'Rejected - exceeds policy limits',
+                    comments: 'Rejected - policy violation',
                     changedAt: rejectionDate
                 });
-                expenseData.rejectionReason = 'Expense exceeds policy limits or insufficient documentation';
+                expenseData.rejectionReason = getRejectionReason(category, amount);
             }
 
-            if (status === 'reimbursed') {
-                const reimbursementDate = new Date(submissionDate.getTime() + Math.random() * 7 * 24 * 60 * 60 * 1000);
-                const financeUser = randomElement(financeUsers);
+            if (status === 'reimbursed' || status === 'paid') {
+                const reimbursementDate = new Date(submissionDate.getTime() + Math.random() * 3 * 24 * 60 * 60 * 1000);
+                const financeUser = financeUsers[Math.floor(Math.random() * financeUsers.length)];
                 expenseData.statusHistory.push({
-                    status: 'reimbursed',
+                    status: status,
                     changedBy: financeUser._id,
-                    comments: 'Reimbursement processed',
+                    comments: `${status === 'reimbursed' ? 'Reimbursement' : 'Payment'} processed`,
                     changedAt: reimbursementDate
                 });
                 expenseData.financeApproverId = financeUser._id;
                 expenseData.reimbursementDate = reimbursementDate;
-                expenseData.reimbursementMode = randomElement(['bank_transfer', 'cheque', 'wallet']);
+                expenseData.reimbursementMode = ['bank_transfer', 'cheque'][Math.floor(Math.random() * 2)];
             }
 
             expenses.push(expenseData);
         }
+        
+        console.log(`✅ Generated ${expenseCount} expenses for ${employee.name}`);
     }
 
     try {
-        // Insert in batches to avoid memory issues
-        const batchSize = 100;
+        // Insert expenses in batches
+        const batchSize = 50;
         for (let i = 0; i < expenses.length; i += batchSize) {
             const batch = expenses.slice(i, i + batchSize);
             await Expense.insertMany(batch);
@@ -548,285 +421,398 @@ const seedExpenses = async (users, categories) => {
         console.log(`✅ ${expenses.length} expenses created`);
     } catch (error) {
         console.error('Error seeding expenses:', error);
+        throw error;
     }
 };
 
-// Helper functions for generating realistic data
-function getExpenseDescription(category) {
+// Helper functions
+function getExpenseDescription(category, department) {
     const descriptions = {
-        travel: ['Client meeting travel', 'Conference attendance', 'Business trip to client site', 'Team offsite travel'],
-        food: ['Client lunch meeting', 'Team dinner', 'Conference meals', 'Working lunch'],
-        accommodation: ['Hotel stay for conference', 'Client visit accommodation', 'Training program stay'],
-        office_supplies: ['Laptop accessories', 'Stationery purchase', 'Office furniture', 'Team supplies'],
-        others: ['Professional membership', 'Software subscription', 'Books and materials', 'Certification fee']
+        travel: {
+            Engineering: ['Client meeting travel', 'Conference attendance', 'Team offsite'],
+            Sales: ['Sales trip', 'Client visit', 'Business development travel'],
+            default: ['Business travel', 'Work-related travel']
+        },
+        food: {
+            Engineering: ['Team lunch', 'Working dinner', 'Conference meals'],
+            Sales: ['Client lunch', 'Business dinner', 'Entertainment'],
+            default: ['Business meal', 'Team dining']
+        },
+        accommodation: {
+            Engineering: ['Hotel for conference', 'Training accommodation'],
+            Sales: ['Hotel for client visit', 'Sales trip accommodation'],
+            default: ['Business accommodation', 'Hotel stay']
+        },
+        office_supplies: {
+            default: ['Office stationery', 'Printer supplies', 'Team materials']
+        },
+        others: {
+            default: ['Miscellaneous expense', 'Other business cost']
+        }
     };
-    return descriptions[category] ? descriptions[category][Math.floor(Math.random() * descriptions[category].length)] : 'Business expense';
+
+    const deptDescriptions = descriptions[category]?.[department] || descriptions[category]?.default;
+    return deptDescriptions ? deptDescriptions[Math.floor(Math.random() * deptDescriptions.length)] : 'Business expense';
 }
 
 function getVendorName(category) {
     const vendors = {
-        travel: ['Uber Corporate', 'Airline Corp', 'Railway Services', 'Taxi Company'],
-        food: ['Restaurant Chain', 'Food Delivery Service', 'Cafeteria', 'Fine Dining'],
-        accommodation: ['Hotel Chain', 'Airbnb Business', 'Serviced Apartments'],
-        office_supplies: ['Office Depot', 'Amazon Business', 'Local Stationery', 'Tech Store'],
-        others: ['Software Inc', 'Training Provider', 'Professional Body', 'Online Platform']
+        travel: ['Uber Corporate', 'Ola Business', 'MakeMyTrip', 'Air India'],
+        food: ['Swiggy Corporate', 'Zomato Business', 'Dominos', 'Local Restaurant'],
+        accommodation: ['Taj Hotels', 'Marriott', 'OYO Business', 'Radisson'],
+        office_supplies: ['Amazon Business', 'Flipkart Wholesale', 'Office Depot'],
+        others: ['Vendor Inc', 'Local Store', 'Online Platform']
     };
     return vendors[category] ? vendors[category][Math.floor(Math.random() * vendors[category].length)] : 'Vendor Inc';
 }
 
 function getRandomNotes(status) {
     const notes = {
-        draft: ['Need to add receipt', 'Verify amounts', 'Check policy compliance'],
-        submitted: ['Submitted for approval', 'Awaiting manager review', 'Documentation complete'],
-        under_review: ['Being reviewed by manager', 'Additional info requested', 'Policy compliance check'],
-        approved: ['Approved per policy', 'Ready for reimbursement', 'All checks passed'],
-        rejected: ['Exceeds limit', 'Missing documentation', 'Non-compliant with policy'],
-        reimbursed: ['Payment processed', 'Reimbursement completed', 'Bank transfer done']
+        draft: ['Need to add receipt', 'Pending documentation'],
+        submitted: ['Awaiting manager review', 'Submitted for approval'],
+        under_review: ['Being reviewed', 'Verification in progress'],
+        approved: ['Approved for payment', 'Ready for reimbursement'],
+        rejected: ['Policy violation', 'Missing documentation'],
+        reimbursed: ['Payment processed', 'Bank transfer completed'],
+        paid: ['Payment issued', 'Transaction complete']
     };
     return notes[status] ? notes[status][Math.floor(Math.random() * notes[status].length)] : 'Expense note';
+}
+
+function getRejectionReason(category, amount) {
+    const reasons = [
+        `Expense exceeds ${category} limit of ${category === 'travel' ? '₹5000' : category === 'accommodation' ? '₹3000' : category === 'food' ? '₹1000' : 'category limit'}`,
+        'Missing or unclear receipt',
+        'Expense not business-related',
+        'Insufficient documentation',
+        'Violation of company policy'
+    ];
+    return reasons[Math.floor(Math.random() * reasons.length)];
 }
 
 // Assignment-specific test data
 const seedAssignmentTestData = async (users) => {
     console.log('\n📝 Creating assignment-specific test data...');
 
-    // Get specific users for assignment scenarios
     const employeeUser = users.find(u => u.email === 'john.developer@datasturdy.com');
     const managerUser = users.find(u => u.email === 'engmanager@datasturdy.com');
     const financeUser = users.find(u => u.email === 'finance@datasturdy.com');
+    const salesEmployee = users.find(u => u.email === 'alex.sales@datasturdy.com');
+    const salesManager = users.find(u => u.email === 'salesmanager@datasturdy.com');
 
-    if (!employeeUser || !managerUser || !financeUser) {
+    if (!employeeUser || !managerUser || !financeUser || !salesEmployee || !salesManager) {
         console.error('❌ Required users not found for assignment test data');
         return;
     }
 
     const assignmentExpenses = [];
 
-    // SCENARIO 1: Employee submits travel expense (5000 INR for Travel)
-    const travelExpense = {
-        userId: employeeUser._id,
-        expenseId: `EXP2024ASSIGN001`,
-        expenseDate: new Date('2024-12-10'),
-        submissionDate: new Date('2024-12-10'),
-        category: 'travel',
-        amount: 5000,
-        currency: 'INR',
-        description: 'Travel expense for client meeting in Mumbai',
-        vendorName: 'Uber Corporate',
-        paymentMethod: 'corporate_card',
-        receiptNumber: 'REC123456',
-        receiptFile: 'travel_receipt_001.pdf',
-        status: 'submitted',
-        tags: ['travel', 'client-meeting', 'assignment'],
-        notes: 'Travel to client site for project discussion',
-        statusHistory: [{
+    // Get current date and dates for last 7 days
+    const today = new Date();
+    const dates = {
+        today: new Date(),
+        yesterday: new Date(today.setDate(today.getDate() - 1)),
+        twoDaysAgo: new Date(today.setDate(today.getDate() - 2)),
+        threeDaysAgo: new Date(today.setDate(today.getDate() - 3)),
+        fourDaysAgo: new Date(today.setDate(today.getDate() - 4)),
+        fiveDaysAgo: new Date(today.setDate(today.getDate() - 5))
+    };
+
+    // Test scenarios
+    const testExpenses = [
+        // Draft expense
+        {
+            expenseId: generateExpenseId(),
+            userId: employeeUser._id,
+            expenseDate: dates.twoDaysAgo,
+            submissionDate: dates.twoDaysAgo,
+            category: 'travel',
+            amount: 3500,
+            currency: 'INR',
+            description: 'Draft travel expense for review',
+            vendorName: 'Uber Corporate',
+            paymentMethod: 'corporate_card',
+            receiptNumber: 'REC-TEST-001',
+            receiptFile: 'draft_receipt.pdf',
+            status: 'draft',
+            tags: ['travel', 'test'],
+            notes: 'Need to add hotel receipt',
+            statusHistory: []
+        },
+        // Submitted expense
+        {
+            expenseId: generateExpenseId(),
+            userId: employeeUser._id,
+            expenseDate: dates.threeDaysAgo,
+            submissionDate: dates.yesterday,
+            category: 'food',
+            amount: 850,
+            currency: 'INR',
+            description: 'Team lunch during sprint review',
+            vendorName: 'Dominos',
+            paymentMethod: 'credit_card',
+            receiptNumber: 'REC-TEST-002',
+            receiptFile: 'food_receipt.pdf',
             status: 'submitted',
-            changedBy: employeeUser._id,
-            comments: 'Travel expense submitted as per assignment requirement',
-            changedAt: new Date('2024-12-10')
-        }]
-    };
-    assignmentExpenses.push(travelExpense);
-
-    // SCENARIO 2: Employee submits food expense (pending approval)
-    const foodExpense = {
-        userId: employeeUser._id,
-        expenseId: `EXP2024ASSIGN002`,
-        expenseDate: new Date('2024-12-11'),
-        submissionDate: new Date('2024-12-11'),
-        category: 'food',
-        amount: 2500,
-        currency: 'INR',
-        description: 'Team lunch during project milestone',
-        vendorName: 'Restaurant Chain',
-        paymentMethod: 'credit_card',
-        receiptNumber: 'REC123457',
-        receiptFile: 'food_receipt_002.pdf',
-        status: 'under_review',
-        approverId: managerUser._id,
-        tags: ['food', 'team-lunch', 'assignment'],
-        notes: 'Team celebration for project completion',
-        statusHistory: [
-            {
+            tags: ['food', 'team', 'test'],
+            notes: 'Submitted for manager approval',
+            statusHistory: [{
                 status: 'submitted',
                 changedBy: employeeUser._id,
-                comments: 'Food expense submitted',
-                changedAt: new Date('2024-12-11')
-            },
-            {
-                status: 'under_review',
-                changedBy: managerUser._id,
-                comments: 'Under review by manager',
-                changedAt: new Date('2024-12-11')
-            }
-        ]
-    };
-    assignmentExpenses.push(foodExpense);
+                comments: 'Team lunch expense submitted',
+                changedAt: dates.yesterday
+            }]
+        },
+        // Under review
+        {
+            expenseId: generateExpenseId(),
+            userId: employeeUser._id,
+            expenseDate: dates.fourDaysAgo,
+            submissionDate: dates.twoDaysAgo,
+            category: 'office_supplies',
+            amount: 1200,
+            currency: 'INR',
+            description: 'Office stationery purchase',
+            vendorName: 'Amazon Business',
+            paymentMethod: 'online',
+            receiptNumber: 'REC-TEST-003',
+            receiptFile: 'office_receipt.pdf',
+            status: 'under_review',
+            approverId: managerUser._id,
+            tags: ['office-supplies', 'test'],
+            notes: 'Under manager review',
+            statusHistory: [
+                {
+                    status: 'submitted',
+                    changedBy: employeeUser._id,
+                    comments: 'Office supplies expense submitted',
+                    changedAt: dates.twoDaysAgo
+                },
+                {
+                    status: 'under_review',
+                    changedBy: managerUser._id,
+                    comments: 'Reviewing stationery purchase',
+                    changedAt: dates.yesterday
+                }
+            ]
+        },
+        // Approved expense
+        {
+            expenseId: generateExpenseId(),
+            userId: employeeUser._id,
+            expenseDate: dates.fiveDaysAgo,
+            submissionDate: dates.threeDaysAgo,
+            category: 'travel',
+            amount: 4200,
+            currency: 'INR',
+            description: 'Client meeting travel',
+            vendorName: 'Ola Business',
+            paymentMethod: 'corporate_card',
+            receiptNumber: 'REC-TEST-004',
+            receiptFile: 'travel_approved.pdf',
+            status: 'approved',
+            approverId: managerUser._id,
+            approvalDate: dates.yesterday,
+            tags: ['travel', 'client', 'approved', 'test'],
+            notes: 'Approved for reimbursement',
+            statusHistory: [
+                {
+                    status: 'submitted',
+                    changedBy: employeeUser._id,
+                    comments: 'Client travel expense submitted',
+                    changedAt: dates.threeDaysAgo
+                },
+                {
+                    status: 'under_review',
+                    changedBy: managerUser._id,
+                    comments: 'Reviewing client travel',
+                    changedAt: dates.twoDaysAgo
+                },
+                {
+                    status: 'approved',
+                    changedBy: managerUser._id,
+                    comments: 'Approved - valid business expense',
+                    changedAt: dates.yesterday
+                }
+            ]
+        },
+        // Rejected expense
+        {
+            expenseId: generateExpenseId(),
+            userId: employeeUser._id,
+            expenseDate: dates.fiveDaysAgo,
+            submissionDate: dates.threeDaysAgo,
+            category: 'accommodation',
+            amount: 6500,
+            currency: 'INR',
+            description: 'Hotel stay during conference',
+            vendorName: 'Taj Hotel',
+            paymentMethod: 'corporate_card',
+            receiptNumber: 'REC-TEST-005',
+            receiptFile: 'hotel_rejected.pdf',
+            status: 'rejected',
+            approverId: managerUser._id,
+            rejectionReason: 'Hotel expense exceeds daily limit of ₹5000 as per company policy',
+            tags: ['accommodation', 'rejected', 'test'],
+            notes: 'Rejected due to policy violation',
+            statusHistory: [
+                {
+                    status: 'submitted',
+                    changedBy: employeeUser._id,
+                    comments: 'Conference accommodation submitted',
+                    changedAt: dates.threeDaysAgo
+                },
+                {
+                    status: 'under_review',
+                    changedBy: managerUser._id,
+                    comments: 'Checking accommodation policy',
+                    changedAt: dates.twoDaysAgo
+                },
+                {
+                    status: 'rejected',
+                    changedBy: managerUser._id,
+                    comments: 'Rejected - exceeds accommodation limit',
+                    changedAt: dates.yesterday
+                }
+            ]
+        },
+        // Reimbursed expense
+        {
+            expenseId: generateExpenseId(),
+            userId: employeeUser._id,
+            expenseDate: new Date('2024-11-25'),
+            submissionDate: new Date('2024-11-26'),
+            category: 'travel',
+            amount: 3800,
+            currency: 'INR',
+            description: 'Flight ticket for training',
+            vendorName: 'Air India',
+            paymentMethod: 'online',
+            receiptNumber: 'REC-TEST-006',
+            receiptFile: 'flight_reimbursed.pdf',
+            status: 'reimbursed',
+            approverId: managerUser._id,
+            financeApproverId: financeUser._id,
+            approvalDate: new Date('2024-11-28'),
+            reimbursementDate: new Date('2024-12-01'),
+            reimbursementMode: 'bank_transfer',
+            tags: ['travel', 'training', 'reimbursed', 'test'],
+            notes: 'Reimbursement processed successfully',
+            statusHistory: [
+                {
+                    status: 'submitted',
+                    changedBy: employeeUser._id,
+                    comments: 'Training travel expense submitted',
+                    changedAt: new Date('2024-11-26')
+                },
+                {
+                    status: 'under_review',
+                    changedBy: managerUser._id,
+                    comments: 'Reviewing training travel',
+                    changedAt: new Date('2024-11-27')
+                },
+                {
+                    status: 'approved',
+                    changedBy: managerUser._id,
+                    comments: 'Approved for reimbursement',
+                    changedAt: new Date('2024-11-28')
+                },
+                {
+                    status: 'reimbursed',
+                    changedBy: financeUser._id,
+                    comments: 'Bank transfer completed',
+                    changedAt: new Date('2024-12-01')
+                }
+            ]
+        },
+        // Sales team expense
+        {
+            expenseId: generateExpenseId(),
+            userId: salesEmployee._id,
+            expenseDate: dates.threeDaysAgo,
+            submissionDate: dates.twoDaysAgo,
+            category: 'travel',
+            amount: 2800,
+            currency: 'INR',
+            description: 'Client visit in Delhi',
+            vendorName: 'Air India',
+            paymentMethod: 'corporate_card',
+            receiptNumber: 'REC-TEST-007',
+            receiptFile: 'sales_travel.pdf',
+            status: 'approved',
+            approverId: salesManager._id,
+            approvalDate: dates.yesterday,
+            tags: ['travel', 'sales', 'client-visit', 'test'],
+            notes: 'Sales travel approved',
+            statusHistory: [
+                {
+                    status: 'submitted',
+                    changedBy: salesEmployee._id,
+                    comments: 'Sales travel expense submitted',
+                    changedAt: dates.twoDaysAgo
+                },
+                {
+                    status: 'under_review',
+                    changedBy: salesManager._id,
+                    comments: 'Reviewing sales travel',
+                    changedAt: dates.yesterday
+                },
+                {
+                    status: 'approved',
+                    changedBy: salesManager._id,
+                    comments: 'Approved - client meeting',
+                    changedAt: dates.yesterday
+                }
+            ]
+        }
+    ];
 
-    // SCENARIO 3: Manager approves an expense
-    const approvedExpense = {
-        userId: employeeUser._id,
-        expenseId: `EXP2024ASSIGN003`,
-        expenseDate: new Date('2024-12-05'),
-        submissionDate: new Date('2024-12-05'),
-        category: 'office_supplies',
-        amount: 3500,
-        currency: 'INR',
-        description: 'Purchase of office stationery and supplies',
-        vendorName: 'Office Depot',
-        paymentMethod: 'debit_card',
-        receiptNumber: 'REC123458',
-        receiptFile: 'office_receipt_003.pdf',
-        status: 'approved',
-        approverId: managerUser._id,
-        approvalDate: new Date('2024-12-07'),
-        tags: ['office-supplies', 'stationery', 'assignment'],
-        notes: 'Approved by manager as per policy',
-        statusHistory: [
-            {
-                status: 'submitted',
-                changedBy: employeeUser._id,
-                comments: 'Office supplies expense submitted',
-                changedAt: new Date('2024-12-05')
-            },
-            {
-                status: 'under_review',
-                changedBy: managerUser._id,
-                comments: 'Under review',
-                changedAt: new Date('2024-12-06')
-            },
-            {
-                status: 'approved',
-                changedBy: managerUser._id,
-                comments: 'Approved - within policy limits',
-                changedAt: new Date('2024-12-07')
-            }
-        ]
-    };
-    assignmentExpenses.push(approvedExpense);
-
-    // SCENARIO 4: Manager rejects an expense
-    const rejectedExpense = {
-        userId: employeeUser._id,
-        expenseId: `EXP2024ASSIGN004`,
-        expenseDate: new Date('2024-12-03'),
-        submissionDate: new Date('2024-12-03'),
-        category: 'accommodation',
-        amount: 8500,
-        currency: 'INR',
-        description: 'Hotel stay during conference',
-        vendorName: 'Hotel Chain',
-        paymentMethod: 'corporate_card',
-        receiptNumber: 'REC123459',
-        receiptFile: 'hotel_receipt_004.pdf',
-        status: 'rejected',
-        approverId: managerUser._id,
-        rejectionReason: 'Hotel expense exceeds the daily limit of ₹5000 as per company policy',
-        tags: ['accommodation', 'conference', 'assignment'],
-        notes: 'Rejected due to policy violation',
-        statusHistory: [
-            {
-                status: 'submitted',
-                changedBy: employeeUser._id,
-                comments: 'Hotel expense submitted',
-                changedAt: new Date('2024-12-03')
-            },
-            {
-                status: 'under_review',
-                changedBy: managerUser._id,
-                comments: 'Checking policy compliance',
-                changedAt: new Date('2024-12-04')
-            },
-            {
-                status: 'rejected',
-                changedBy: managerUser._id,
-                comments: 'Rejected - exceeds daily accommodation limit',
-                changedAt: new Date('2024-12-05')
-            }
-        ]
-    };
-    assignmentExpenses.push(rejectedExpense);
-
-    // SCENARIO 5: Finance processes reimbursement
-    const reimbursedExpense = {
-        userId: employeeUser._id,
-        expenseId: `EXP2024ASSIGN005`,
-        expenseDate: new Date('2024-11-20'),
-        submissionDate: new Date('2024-11-20'),
-        category: 'travel',
-        amount: 4200,
-        currency: 'INR',
-        description: 'Flight ticket for training program',
-        vendorName: 'Airline Corp',
-        paymentMethod: 'online',
-        receiptNumber: 'REC123460',
-        receiptFile: 'flight_receipt_005.pdf',
-        status: 'reimbursed',
-        approverId: managerUser._id,
-        financeApproverId: financeUser._id,
-        approvalDate: new Date('2024-11-25'),
-        reimbursementDate: new Date('2024-12-01'),
-        reimbursementMode: 'bank_transfer',
-        tags: ['travel', 'training', 'flight', 'assignment'],
-        notes: 'Reimbursement processed successfully',
-        statusHistory: [
-            {
-                status: 'submitted',
-                changedBy: employeeUser._id,
-                comments: 'Flight expense submitted',
-                changedAt: new Date('2024-11-20')
-            },
-            {
-                status: 'under_review',
-                changedBy: managerUser._id,
-                comments: 'Manager review in progress',
-                changedAt: new Date('2024-11-22')
-            },
-            {
-                status: 'approved',
-                changedBy: managerUser._id,
-                comments: 'Approved for reimbursement',
-                changedAt: new Date('2024-11-25')
-            },
-            {
-                status: 'reimbursed',
-                changedBy: financeUser._id,
-                comments: 'Bank transfer completed',
-                changedAt: new Date('2024-12-01')
-            }
-        ]
-    };
-    assignmentExpenses.push(reimbursedExpense);
+    assignmentExpenses.push(...testExpenses);
 
     // Insert assignment test expenses
     try {
         await Expense.insertMany(assignmentExpenses);
         console.log(`✅ ${assignmentExpenses.length} assignment-specific expenses created`);
         
-        // Print test credentials for assignment
-        console.log('\n📋 ASSIGNMENT TEST CREDENTIALS:');
-        console.log('================================');
-        console.log('\n👤 Employee Login:');
+        // Print test credentials
+        console.log('\n📋 TEST CREDENTIALS:');
+        console.log('====================');
+        console.log('\n👨‍💻 Engineering Employee:');
         console.log('Email: john.developer@datasturdy.com');
         console.log('Password: employee123');
-        console.log('\n👨‍💼 Manager Login:');
+        
+        console.log('\n👨‍💼 Engineering Manager:');
         console.log('Email: engmanager@datasturdy.com');
         console.log('Password: manager123');
-        console.log('\n💰 Finance Login:');
+        
+        console.log('\n💰 Finance User:');
         console.log('Email: finance@datasturdy.com');
         console.log('Password: finance123');
-        console.log('\n👑 Admin Login:');
+        
+        console.log('\n👑 Admin User:');
         console.log('Email: admin@datasturdy.com');
         console.log('Password: admin123');
-        console.log('\n📝 Assignment Test Data Summary:');
-        console.log('1. Travel Expense (5000 INR) - Status: Submitted');
-        console.log('2. Food Expense (2500 INR) - Status: Under Review');
-        console.log('3. Office Supplies (3500 INR) - Status: Approved');
-        console.log('4. Hotel Stay (8500 INR) - Status: Rejected');
-        console.log('5. Flight Ticket (4200 INR) - Status: Reimbursed');
+        
+        console.log('\n💼 Sales Employee:');
+        console.log('Email: alex.sales@datasturdy.com');
+        console.log('Password: employee123');
+        
+        console.log('\n📊 Sales Manager:');
+        console.log('Email: salesmanager@datasturdy.com');
+        console.log('Password: manager123');
+        
+        console.log('\n📝 Test Data Summary:');
+        console.log('1. Draft Travel Expense (₹3500) - Status: Draft');
+        console.log('2. Submitted Food Expense (₹850) - Status: Submitted');
+        console.log('3. Under Review Office Supplies (₹1200) - Status: Under Review');
+        console.log('4. Approved Travel (₹4200) - Status: Approved');
+        console.log('5. Rejected Accommodation (₹6500) - Status: Rejected');
+        console.log('6. Reimbursed Travel (₹3800) - Status: Reimbursed');
+        console.log('7. Sales Travel (₹2800) - Status: Approved (Sales Team)');
         
     } catch (error) {
         console.error('Error creating assignment test data:', error);
+        throw error;
     }
 };
 
@@ -840,11 +826,16 @@ const seedDatabase = async () => {
         // Clear existing data
         await clearDatabase();
         
+        // Reset expense counter
+        expenseCounter = 1;
+        
         // Seed in order
         const departments = await seedDepartments();
         const categories = await seedCategories();
         const users = await seedUsers(departments);
-        await seedExpenses(users, categories);
+        
+        // Generate expenses
+        await seedExpenses(users);
         
         // Create assignment-specific test data
         await seedAssignmentTestData(users);
@@ -859,10 +850,42 @@ const seedDatabase = async () => {
         const expenseCount = await Expense.countDocuments();
         console.log(`   Expenses: ${expenseCount}`);
         
+        // Get expense breakdown by status
+        const statusCounts = await Expense.aggregate([
+            { $group: { _id: "$status", count: { $sum: 1 } } }
+        ]);
+        
+        console.log('\n📈 Expense Status Breakdown:');
+        statusCounts.forEach(stat => {
+            console.log(`   - ${stat._id}: ${stat.count} expenses`);
+        });
+        
+        // Get expense breakdown by department
+        const expenseByDept = await Expense.aggregate([
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            { $unwind: '$user' },
+            { $group: { _id: "$user.department", count: { $sum: 1 }, totalAmount: { $sum: "$amount" } } }
+        ]);
+        
+        console.log('\n🏢 Department-wise Expense Summary:');
+        expenseByDept.forEach(dept => {
+            console.log(`   - ${dept._id}: ${dept.count} expenses (₹${dept.totalAmount})`);
+        });
+        
         console.log('\n🎉 Your Expense Management System is ready with test data!');
         console.log('\n🔗 API Base URL: http://localhost:5000');
-        console.log('📚 API Documentation: Check README.md for endpoints');
-        console.log('\n⚠️  IMPORTANT: Use the test credentials above for assignment testing');
+        console.log('\n⚠️  IMPORTANT: Use the test credentials above for testing');
+        console.log('   • Employee flow: Submit expenses, view history');
+        console.log('   • Manager flow: Review pending, approve/reject');
+        console.log('   • Finance flow: Process reimbursements');
+        console.log('   • Admin flow: Full system access');
         
         process.exit(0);
     } catch (error) {

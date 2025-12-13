@@ -9,6 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   
   const { login } = useAuthHook();
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const Login = () => {
       if (result.success) {
         navigate('/');
       } else {
-        setError(result.message || 'Login failed');
+        setError(result.message || 'Invalid email or password');
       }
     } catch (err) {
       setError(err.message || 'An error occurred during login');
@@ -32,33 +33,33 @@ const Login = () => {
     }
   };
 
-  const createTestUsers = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('http://localhost:5000/api/auth/create-test-users', {
-        method: 'POST'
-      });
-      const data = await response.json();
-      if (data.success) {
-        alert('Test users created successfully!\n\nUse these credentials to login:\n\n' +
-              'employee@test.com / password\n' +
-              'manager@test.com / password\n' +
-              'finance@test.com / password\n' +
-              'admin@test.com / password');
-      }
-    } catch (error) {
-      alert('Error creating test users');
-    } finally {
-      setLoading(false);
-    }
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
+
+  const handleForgotPassword = () => {
+    // Implement forgot password functionality
+    alert('Forgot password feature to be implemented');
+  };
+
+  const handleCredentialClick = (credEmail, credPassword) => {
+    setEmail(credEmail);
+    setPassword(credPassword);
+  };
+
+  const demoCredentials = [
+    { role: 'Employee', email: 'john.developer@datasturdy.com', password: 'employee123' },
+    { role: 'Manager', email: 'engmanager@datasturdy.com', password: 'manager123' },
+    { role: 'Finance', email: 'finance@test.com', password: 'finance123' },
+    { role: 'Admin', email: 'admin@datasturdy.com', password: 'admin123' }
+  ];
 
   return (
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
           <h1>Expense Management</h1>
-          <p>Sign in to your account</p>
+          <p>Sign in to access your expense dashboard</p>
         </div>
         
         {error && (
@@ -67,29 +68,50 @@ const Login = () => {
         
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
-              disabled={loading}
-            />
+            <label>
+              <span className="form-label-text">Email Address</span>
+              <span className="forgot-password" onClick={handleForgotPassword}>
+                Forgot password?
+              </span>
+            </label>
+            <div className="input-wrapper">
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
+                required
+                disabled={loading}
+                className="form-input"
+              />
+            </div>
           </div>
           
           <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              required
-              disabled={loading}
-            />
+            <label>
+              <span className="form-label-text">Password</span>
+            </label>
+            <div className="input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+                disabled={loading}
+                className="form-input"
+              />
+              <button 
+                type="button"
+                className="password-toggle"
+                onClick={togglePasswordVisibility}
+                disabled={loading}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
           </div>
           
           <button 
@@ -102,17 +124,23 @@ const Login = () => {
         </form>
         
         <div className="login-footer">
-          <button 
-            onClick={createTestUsers}
-            className="test-users-btn"
-            disabled={loading}
-            type="button"
-          >
-            Create Test Users
-          </button>
-          <p className="test-credentials">
-            Use: employee@test.com / password
-          </p>
+          <div className="demo-title">Demo Accounts</div>
+          <div className="credentials-grid">
+            {demoCredentials.map((cred, index) => (
+              <div 
+                key={index} 
+                className="credential-card"
+                onClick={() => handleCredentialClick(cred.email, cred.password)}
+              >
+                <div className="credential-role">{cred.role}</div>
+                <div className="credential-details">
+                  {cred.email}<br/>
+                  {cred.password}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="click-hint">Click any card to auto-fill credentials</div>
         </div>
       </div>
     </div>

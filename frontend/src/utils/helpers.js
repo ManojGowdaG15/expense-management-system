@@ -2,7 +2,7 @@ import { STATUS_COLORS, STATUS_LABELS } from './constants';
 
 export const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('en-IN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
@@ -11,7 +11,7 @@ export const formatDate = (dateString) => {
 
 export const formatDateTime = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('en-IN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -21,9 +21,9 @@ export const formatDateTime = (dateString) => {
 };
 
 export const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'USD'
+    currency: 'INR'
   }).format(amount);
 };
 
