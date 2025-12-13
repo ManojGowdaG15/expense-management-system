@@ -1,15 +1,17 @@
 import React from 'react';
+import './Common.css';
 
-const LoadingSpinner = ({ size = 'md' }) => {
+const LoadingSpinner = ({ size = 'medium', message = 'Loading...' }) => {
   const sizeClass = {
-    sm: 'w-4 h-4',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12'
+    small: 'spinner-small',
+    medium: 'spinner-medium',
+    large: 'spinner-large'
   }[size];
 
   return (
-    <div className="flex items-center justify-center p-4">
-      <div className={`loading-spinner ${sizeClass}`}></div>
+    <div className="loading-spinner-container">
+      <div className={`spinner ${sizeClass}`}></div>
+      {message && <p className="spinner-message">{message}</p>}
     </div>
   );
 };

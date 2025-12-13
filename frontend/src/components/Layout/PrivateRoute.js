@@ -1,21 +1,21 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuthHook } from '../../hooks/useAuth';
 import LoadingSpinner from '../Common/LoadingSpinner';
 
-const PrivateRoute = ({ children, allowedRoles }) => {
-  const { user, isLoading } = useAuth();
+const PrivateRoute = ({ children, allowedRoles = [] }) => {
+  const { user, loading, isAuthenticated } = useAuthHook();
 
-  if (isLoading) {
+  if (loading) {
     return <LoadingSpinner />;
   }
 
-  if (!user) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/dashboard" />;
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" />;
   }
 
   return children;

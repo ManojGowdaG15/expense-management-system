@@ -1,95 +1,116 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/Layout/PrivateRoute';
 import Layout from './components/Layout/Layout';
+
+// Auth
 import Login from './components/Auth/Login';
 
-// Employee Components
+// Employee
 import EmployeeDashboard from './components/Employee/Dashboard';
 import ExpenseList from './components/Employee/ExpenseList';
 import SubmitExpense from './components/Employee/SubmitExpense';
 import ExpenseDetail from './components/Employee/ExpenseDetail';
 
-// Manager Components
+// Manager
 import ManagerDashboard from './components/Manager/Dashboard';
 import PendingExpenses from './components/Manager/PendingExpenses';
 import TeamExpenses from './components/Manager/TeamExpenses';
 
-// Finance Components
+// Finance
 import FinanceDashboard from './components/Finance/Dashboard';
 import Reimbursement from './components/Finance/Reimbursement';
 
-import './styles/App.css';
+// Import CSS
+import './App.css';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <Toaster position="top-right" />
         <Routes>
+          {/* Public Route */}
           <Route path="/login" element={<Login />} />
           
-          <Route path="/" element={<Layout />}>
-            {/* Employee Routes */}
-            <Route index element={<Navigate to="/dashboard" />} />
-            <Route path="dashboard" element={
-              <PrivateRoute allowedRoles={['employee', 'manager', 'finance', 'admin']}>
+          {/* Protected Routes */}
+          <Route path="/" element={
+            <PrivateRoute>
+              <Layout>
                 <EmployeeDashboard />
-              </PrivateRoute>
-            } />
-            
-            <Route path="expenses" element={
-              <PrivateRoute allowedRoles={['employee']}>
+              </Layout>
+            </PrivateRoute>
+          } />
+          
+          {/* Employee Routes */}
+          <Route path="/expenses" element={
+            <PrivateRoute allowedRoles={['employee', 'admin']}>
+              <Layout>
                 <ExpenseList />
-              </PrivateRoute>
-            } />
-            
-            <Route path="expenses/new" element={
-              <PrivateRoute allowedRoles={['employee']}>
-                <SubmitExpense />
-              </PrivateRoute>
-            } />
-            
-            <Route path="expenses/:id" element={
-              <PrivateRoute allowedRoles={['employee']}>
+              </Layout>
+            </PrivateRoute>
+          } />
+          
+          <Route path="/expenses/:id" element={
+            <PrivateRoute allowedRoles={['employee', 'manager', 'finance', 'admin']}>
+              <Layout>
                 <ExpenseDetail />
-              </PrivateRoute>
-            } />
-            
-            {/* Manager Routes */}
-            <Route path="manager/dashboard" element={
-              <PrivateRoute allowedRoles={['manager', 'admin']}>
+              </Layout>
+            </PrivateRoute>
+          } />
+          
+          <Route path="/submit-expense" element={
+            <PrivateRoute allowedRoles={['employee', 'admin']}>
+              <Layout>
+                <SubmitExpense />
+              </Layout>
+            </PrivateRoute>
+          } />
+          
+          {/* Manager Routes */}
+          <Route path="/manager-dashboard" element={
+            <PrivateRoute allowedRoles={['manager', 'admin']}>
+              <Layout>
                 <ManagerDashboard />
-              </PrivateRoute>
-            } />
-            
-            <Route path="expenses/pending" element={
-              <PrivateRoute allowedRoles={['manager', 'admin']}>
+              </Layout>
+            </PrivateRoute>
+          } />
+          
+          <Route path="/pending-expenses" element={
+            <PrivateRoute allowedRoles={['manager', 'finance', 'admin']}>
+              <Layout>
                 <PendingExpenses />
-              </PrivateRoute>
-            } />
-            
-            <Route path="expenses/team" element={
-              <PrivateRoute allowedRoles={['manager', 'admin']}>
+              </Layout>
+            </PrivateRoute>
+          } />
+          
+          <Route path="/team-expenses" element={
+            <PrivateRoute allowedRoles={['manager', 'admin']}>
+              <Layout>
                 <TeamExpenses />
-              </PrivateRoute>
-            } />
-            
-            {/* Finance Routes */}
-            <Route path="finance/dashboard" element={
-              <PrivateRoute allowedRoles={['finance', 'admin']}>
+              </Layout>
+            </PrivateRoute>
+          } />
+          
+          {/* Finance Routes */}
+          <Route path="/finance-dashboard" element={
+            <PrivateRoute allowedRoles={['finance', 'admin']}>
+              <Layout>
                 <FinanceDashboard />
-              </PrivateRoute>
-            } />
-            
-            <Route path="expenses/reimbursements" element={
-              <PrivateRoute allowedRoles={['finance', 'admin']}>
+              </Layout>
+            </PrivateRoute>
+          } />
+          
+          <Route path="/reimbursements" element={
+            <PrivateRoute allowedRoles={['finance', 'admin']}>
+              <Layout>
                 <Reimbursement />
-              </PrivateRoute>
-            } />
-          </Route>
+              </Layout>
+            </PrivateRoute>
+          } />
+          
+          {/* Fallback Route */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </AuthProvider>

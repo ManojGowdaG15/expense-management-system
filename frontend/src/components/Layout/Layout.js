@@ -1,26 +1,17 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import React from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import { useAuth } from '../../context/AuthContext';
-import LoadingSpinner from '../Common/LoadingSpinner';
+import './Layout.css';
 
-const Layout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { isLoading } = useAuth();
-
-  if (isLoading) {
-    return <LoadingSpinner size="lg" />;
-  }
-
+const Layout = ({ children }) => {
   return (
-    <div className="app-container">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
-        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <main className="p-4 md:p-6">
-          <div className="container">
-            <Outlet />
+    <div className="layout">
+      <Header />
+      <div className="layout-content">
+        <Sidebar />
+        <main className="main-content">
+          <div className="content-wrapper">
+            {children}
           </div>
         </main>
       </div>

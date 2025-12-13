@@ -1,97 +1,54 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import {
-  FiHome,
-  FiFileText,
-  FiPlusCircle,
-  FiCheckCircle,
-  FiDollarSign,
-  FiUsers,
-  FiBarChart2,
-  FiSettings,
-} from 'react-icons/fi';
-import { useAuth } from '../../context/AuthContext';
+import { useAuthHook } from '../../hooks/useAuth';
+import './Layout.css';
 
-const Sidebar = ({ isOpen, onClose }) => {
-  const { user } = useAuth();
+const Sidebar = () => {
+  const { user, isEmployee, isManager, isFinance, isAdmin } = useAuthHook();
+
+  if (!user) return null;
 
   const employeeLinks = [
-    { to: '/dashboard', icon: FiHome, label: 'Dashboard' },
-    { to: '/expenses', icon: FiFileText, label: 'My Expenses' },
-    { to: '/expenses/new', icon: FiPlusCircle, label: 'Submit Expense' },
+    { to: '/', label: 'Dashboard', icon: '📊' },
+    { to: '/expenses', label: 'My Expenses', icon: '💰' },
+    { to: '/submit-expense', label: 'Submit Expense', icon: '➕' }
   ];
 
   const managerLinks = [
-    { to: '/dashboard', icon: FiHome, label: 'Dashboard' },
-    { to: '/expenses/pending', icon: FiCheckCircle, label: 'Pending Approvals' },
-    { to: '/expenses/team', icon: FiUsers, label: 'Team Expenses' },
+    { to: '/', label: 'Dashboard', icon: '📊' },
+    { to: '/pending-expenses', label: 'Pending', icon: '⏳' },
+    { to: '/team-expenses', label: 'Team', icon: '👥' }
   ];
 
   const financeLinks = [
-    { to: '/dashboard', icon: FiHome, label: 'Dashboard' },
-    { to: '/expenses/reimbursements', icon: FiDollarSign, label: 'Reimbursements' },
-    { to: '/reports', icon: FiBarChart2, label: 'Reports' },
+    { to: '/', label: 'Dashboard', icon: '📊' },
+    { to: '/reimbursements', label: 'Reimbursements', icon: '💳' },
+    { to: '/reports', label: 'Reports', icon: '📈' }
   ];
 
-  const commonLinks = [
-    { to: '/settings', icon: FiSettings, label: 'Settings' },
-  ];
-
-  const getLinks = () => {
-    switch(user?.role) {
-      case 'employee':
-        return [...employeeLinks, ...commonLinks];
-      case 'manager':
-        return [...managerLinks, ...commonLinks];
-      case 'finance':
-        return [...financeLinks, ...commonLinks];
-      default:
-        return [...employeeLinks, ...commonLinks];
-    }
-  };
-
-  const links = getLinks();
+  let links = [];
+  if (isEmployee()) links = employeeLinks;
+  if (isManager()) links = managerLinks;
+  if (isFinance()) links = financeLinks;
+  if (isAdmin()) links = [...managerLinks, ...financeLinks];
 
   return (
-    <>
-      <div className={`sidebar-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}></div>
-      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
-        <div className="sidebar-header">
-          <div className="sidebar-logo">
-            <FiDollarSign className="logo-icon" />
-            <h2>Expense Manager</h2>
-          </div>
-        </div>
-        
-        <nav className="sidebar-nav">
-          {links.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              onClick={onClose}
-              className={({ isActive }) => 
-                `sidebar-link ${isActive ? 'active' : ''}`
-              }
-            >
-              <link.icon />
-              <span>{link.label}</span>
-            </NavLink>
-          ))}
-        </nav>
-        
-        <div className="sidebar-footer">
-          <div className="user-profile">
-            <div className="profile-avatar">
-              {user?.name?.charAt(0).toUpperCase()}
-            </div>
-            <div className="profile-info">
-              <p className="profile-name">{user?.name}</p>
-              <p className="profile-role">{user?.role?.toUpperCase()}</p>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </>
+    <nav className="sidebar">
+      <div className="sidebar-menu">
+        {links.map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            className={({ isActive }) => 
+              `sidebar-link ${isActive ? 'active' : ''}`
+            }
+          >
+            <span className="link-icon">{link.icon}</span>
+            <span className="link-label">{link.label}</span>
+          </NavLink>
+        ))}
+      </div>
+    </nav>
   );
 };
 

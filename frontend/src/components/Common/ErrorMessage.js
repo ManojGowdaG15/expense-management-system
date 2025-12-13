@@ -1,18 +1,23 @@
 import React from 'react';
-import { FiAlertCircle } from 'react-icons/fi';
+import './Common.css';
 
-const ErrorMessage = ({ message, onRetry }) => {
+const ErrorMessage = ({ message, onRetry, onClose }) => {
   return (
-    <div className="alert alert-error">
-      <div className="flex items-center gap-2">
-        <FiAlertCircle className="text-xl" />
-        <span>{message}</span>
+    <div className="error-message">
+      <div className="error-content">
+        <span className="error-icon">!</span>
+        <span className="error-text">{message}</span>
+        {onRetry && (
+          <button onClick={onRetry} className="retry-btn">
+            Retry
+          </button>
+        )}
+        {onClose && (
+          <button onClick={onClose} className="close-btn">
+            ×
+          </button>
+        )}
       </div>
-      {onRetry && (
-        <button onClick={onRetry} className="btn btn-secondary mt-2">
-          Try Again
-        </button>
-      )}
     </div>
   );
 };

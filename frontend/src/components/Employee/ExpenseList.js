@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FiFileText, FiPlusCircle, FiEye, FiTrash2 } from 'react-icons/fi';
-import { expenseAPI } from '../../api/axiosConfig';
+import axiosInstance from '../../api/axiosConfig';
+import { formatCurrency, formatDate, getStatusColor, getStatusLabel } from '../../utils/helpers';
 import LoadingSpinner from '../Common/LoadingSpinner';
 import ErrorMessage from '../Common/ErrorMessage';
 import ConfirmationModal from '../Common/ConfirmationModal';
+import './Employee.css';
 
 const ExpenseList = () => {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, expenseId: null });
 
   useEffect(() => {
@@ -19,7 +20,8 @@ const ExpenseList = () => {
   const fetchExpenses = async () => {
     try {
       setLoading(true);
-      const response = await expenseAPI.getExpenses();
+      setError('');
+      const response = await axiosInstance.get('/expenses');
       setExpenses(response.data || []);
     } catch (err) {
       setError(err.message || 'Failed to load expenses');
@@ -28,110 +30,103 @@ const ExpenseList = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (expenseId) => {
     try {
-      await expenseAPI.deleteExpense(id);
-      setExpenses(expenses.filter(expense => expense._id !== id));
+      await axiosInstance.delete(`/expenses/${expenseId}`);
+      setExpenses(expenses.filter(exp => exp._id !== expenseId));
+      setDeleteModal({ isOpen: false, expenseId: null });
     } catch (err) {
-      setError(err.message || 'Failed to delete expense');
+      alert(err.message || 'Failed to delete expense');
     }
   };
 
-  const getStatusBadge = (status) => {
-    const badges = {
-      draft: 'badge-warning',
-      submitted: 'badge-info',
-      under_review: 'badge-primary',
-      approved: 'badge-success',
-      rejected: 'badge-danger',
-      reimbursed: 'badge-info'
-    };
-    return badges[status] || 'badge-info';
+  const handleSubmitExpense = async (expenseId) => {
+    try {
+      await axiosInstance.post(`/expenses/${expenseId}/submit`);
+      fetchExpenses(); // Refresh list
+    } catch (err) {
+      alert(err.message || 'Failed to submit expense');
+    }
   };
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={fetchExpenses} />;
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
-        <h1 className="dashboard-title">My Expenses</h1>
-        <Link to="/expenses/new" className="btn btn-primary">
-          <FiPlusCircle />
-          Submit New Expense
+    <div className="expense-list-container">
+      <div className="list-header">
+        <h2>My Expenses</h2>
+        <Link to="/submit-expense" className="btn-primary">
+          + New Expense
         </Link>
       </div>
 
-      <div className="card">
-        <div className="card-header">
-          <h2 className="text-lg font-semibold">Expense Claims</h2>
+      {error && <ErrorMessage message={error} onRetry={fetchExpenses} />}
+
+      {expenses.length === 0 ? (
+        <div className="empty-state">
+          <p>No expenses found. Create your first expense!</p>
+          <Link to="/submit-expense" className="btn-primary">Submit Expense</Link>
         </div>
-        
-        {expenses.length > 0 ? (
-          <div className="table">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {expenses.map((expense) => (
-                  <tr key={expense._id}>
-                    <td>{expense.expenseId}</td>
-                    <td>{new Date(expense.expenseDate).toLocaleDateString()}</td>
-                    <td>{expense.description}</td>
-                    <td>{expense.category}</td>
-                    <td>₹{expense.amount.toLocaleString()}</td>
-                    <td>
-                      <span className={`badge ${getStatusBadge(expense.status)}`}>
-                        {expense.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="flex gap-2">
-                        <Link to={`/expenses/${expense._id}`} className="btn btn-secondary btn-sm">
-                          <FiEye />
-                          View
-                        </Link>
-                        {expense.status === 'draft' && (
-                          <button
-                            onClick={() => setDeleteModal({ isOpen: true, expenseId: expense._id })}
-                            className="btn btn-danger btn-sm"
+      ) : (
+        <div className="table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {expenses.map((expense) => (
+                <tr key={expense._id}>
+                  <td>{formatDate(expense.date)}</td>
+                  <td className="truncate">{expense.description}</td>
+                  <td>{expense.category}</td>
+                  <td className="amount">{formatCurrency(expense.amount)}</td>
+                  <td>
+                    <span 
+                      className="status-badge"
+                      style={{ backgroundColor: getStatusColor(expense.status) }}
+                    >
+                      {getStatusLabel(expense.status)}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="action-buttons">
+                      <Link to={`/expenses/${expense._id}`} className="btn-small">
+                        View
+                      </Link>
+                      {expense.status === 'draft' && (
+                        <>
+                          <Link to={`/expenses/${expense._id}/edit`} className="btn-small btn-edit">
+                            Edit
+                          </Link>
+                          <button 
+                            onClick={() => handleSubmitExpense(expense._id)}
+                            className="btn-small btn-submit"
                           >
-                            <FiTrash2 />
+                            Submit
+                          </button>
+                          <button 
+                            onClick={() => setDeleteModal({ isOpen: true, expenseId: expense._id })}
+                            className="btn-small btn-delete"
+                          >
                             Delete
                           </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="empty-state">
-            <div className="empty-state-icon">
-              <FiFileText />
-            </div>
-            <h3 className="empty-state-title">No Expenses Found</h3>
-            <p className="empty-state-text">
-              You haven't submitted any expense claims yet.
-            </p>
-            <Link to="/expenses/new" className="btn btn-primary">
-              <FiPlusCircle />
-              Submit Your First Expense
-            </Link>
-          </div>
-        )}
-      </div>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <ConfirmationModal
         isOpen={deleteModal.isOpen}
@@ -140,6 +135,7 @@ const ExpenseList = () => {
         title="Delete Expense"
         message="Are you sure you want to delete this expense? This action cannot be undone."
         confirmText="Delete"
+        cancelText="Cancel"
         type="danger"
       />
     </div>

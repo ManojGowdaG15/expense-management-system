@@ -22,13 +22,7 @@ router.get('/',
     expenseController.getUserExpenses
 );
 
-router.get('/:id', expenseController.getExpenseById);
-router.put('/:id', uploadSingle('receipt'), expenseController.updateExpense);
-router.delete('/:id', expenseController.deleteExpense);
-router.post('/:id/submit', expenseController.submitExpense);
-router.get('/:id/receipt', expenseController.downloadReceipt);
-
-// Manager/Finance/Admin routes
+// IMPORTANT: PUT THIS BEFORE THE '/:id' ROUTE
 router.get('/pending', 
     authorize('manager', 'finance', 'admin'), 
     paginationValidationRules(), 
@@ -36,6 +30,14 @@ router.get('/pending',
     expenseController.getPendingExpenses
 );
 
+// Now the '/:id' route won't catch '/pending'
+router.get('/:id', expenseController.getExpenseById);
+router.put('/:id', uploadSingle('receipt'), expenseController.updateExpense);
+router.delete('/:id', expenseController.deleteExpense);
+router.post('/:id/submit', expenseController.submitExpense);
+router.get('/:id/receipt', expenseController.downloadReceipt);
+
+// Manager/Finance/Admin approval routes
 router.put('/:id/approve', 
     authorize('manager', 'finance', 'admin'), 
     expenseController.approveExpense

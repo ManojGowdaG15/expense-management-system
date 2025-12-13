@@ -1,69 +1,81 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI } from '../api/axiosConfig';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import axiosInstance from '../api/axiosConfig';
 
 const AuthContext = createContext();
 
+export const useAuth = () => useContext(AuthContext);
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      const storedToken = localStorage.getItem('token');
-      const storedUser = localStorage.getItem('user');
-      
-      if (storedToken && storedUser) {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-        
-        try {
-          const response = await authAPI.getProfile();
-          setUser(response.user);
-          localStorage.setItem('user', JSON.stringify(response.user));
-        } catch (error) {
-          console.error('Failed to validate token:', error);
-          logout();
-        }
-      }
-      setIsLoading(false);
-    };
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
     
-    initializeAuth();
+    if (token && storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (err) {
+        console.error('Error parsing user data:', err);
+        logout();
+      }
+    }
+    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
     try {
-      const response = await authAPI.login({ email, password });
+      setError(null);
+      const response = await axiosInstance.post('/auth/login', { email, password });
       
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      
-      setToken(response.token);
-      setUser(response.user);
+      if (response.success && response.token) {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        setUser(response.user);
+        return { success: true, user: response.user };
+      }
+      return { success: false, message: response.message };
     } catch (error) {
-      throw error;
+      setError(error.message || 'Login failed');
+      return { success: false, message: error.message || 'Login failed' };
     }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    setToken(null);
     setUser(null);
+    window.location.href = '/login';
+  };
+
+  const changePassword = async (currentPassword, newPassword) => {
+    try {
+      const response = await axiosInstance.put('/auth/change-password', {
+        currentPassword,
+        newPassword,
+        confirmPassword: newPassword
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const value = {
+    user,
+    loading,
+    error,
+    login,
+    logout,
+    changePassword,
+    isAuthenticated: !!user
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };
